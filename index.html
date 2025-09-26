@@ -6,19 +6,58 @@
   <title>Поздравление для Стаса</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:Inter,system-ui,Arial;background:#0f1724;color:#fff;display:flex;align-items:center;justify-content:center;min-height:100vh;overflow:hidden}
+    body{
+      font-family:Inter,system-ui,Arial;
+      background:#0f1724;
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:100vh;
+      overflow:hidden;
+      flex-direction:column;
+    }
 
-    .container{position:relative;text-align:center;opacity:0;transform:translateY(40px);animation:fadeIn 2s ease forwards 3s;}
+    .container{
+      position:relative;
+      text-align:center;
+      opacity:0;
+      transform:translateY(40px);
+      animation:fadeIn 2s ease forwards 3s;
+      z-index:1;
+    }
+
     h1{font-size:36px;margin-bottom:12px;}
     p{font-size:18px;color:#d1d5db;}
 
     /* background animation */
-    .stars{position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;z-index:-1}
-    .stars span{position:absolute;display:block;width:2px;height:2px;background:#fff;animation:animStar linear infinite}
+    .stars{
+      position:absolute;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      overflow:hidden;
+      z-index:-1
+    }
 
-    @keyframes animStar{from{transform:translateY(0)}to{transform:translateY(100vh)}}
+    .stars span{
+      position:absolute;
+      display:block;
+      width:2px;
+      height:2px;
+      background:#fff;
+      animation:animStar linear infinite
+    }
 
-    @keyframes fadeIn{to{opacity:1;transform:translateY(0)}}
+    @keyframes animStar{
+      from{transform:translateY(0)}
+      to{transform:translateY(100vh)}
+    }
+
+    @keyframes fadeIn{
+      to{opacity:1;transform:translateY(0)}
+    }
 
     /* fireworks */
     .particle{
@@ -29,66 +68,116 @@
       pointer-events:none;
       filter:blur(1px);
     }
+
+    /* button */
+    #fireBtn {
+      margin-top: 32px;
+      background: #e63946;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: background 0.2s ease;
+      z-index: 2;
+    }
+
+    #fireBtn:hover {
+      background: #ff4757;
+    }
+
   </style>
 </head>
 <body>
+  <audio id="boomSound" src="tap.mp3" preload="auto"></audio>
   <div class="stars"></div>
+
   <div class="container">
     <h1>С Днём Рождения, Стас!</h1>
     <p>Пусть твои дороги будут ровными, жизнь яркой, а мечты исполняются быстрее, чем набирается скорость.</p>
+      <button id="fireBtn">🎆 Запустить салют</button>
   </div>
+
+
 
   <script>
     // generate stars
-    const stars=document.querySelector('.stars');
-    for(let i=0;i<120;i++){
-      const s=document.createElement('span');
-      s.style.left=Math.random()*window.innerWidth+'px';
-      s.style.top=Math.random()*window.innerHeight+'px';
-      s.style.animationDuration= 2+Math.random()*4+'s';
+    const stars = document.querySelector('.stars');
+    for (let i = 0; i < 120; i++) {
+      const s = document.createElement('span');
+      s.style.left = Math.random() * window.innerWidth + 'px';
+      s.style.top = Math.random() * window.innerHeight + 'px';
+      s.style.animationDuration = 2 + Math.random() * 4 + 's';
       stars.appendChild(s);
     }
 
-    // firework function
-    function launchFirework(x,y){
-      const count=40;
-      for(let i=0;i<count;i++){
-        const p=document.createElement('div');
-        p.className='particle';
-        const color=`hsl(${Math.random()*360},100%,60%)`;
-        p.style.background=color;
+    // fireworks
+    function launchFirework(x, y) {
+      const count = 40;
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const color = `hsl(${Math.random() * 360}, 100%, 60%)`;
+        p.style.background = color;
         document.body.appendChild(p);
 
-        const angle=(Math.PI*2/count)*i;
-        const radius=120+Math.random()*50;
-        const dx=Math.cos(angle)*radius;
-        const dy=Math.sin(angle)*radius;
+        const angle = (Math.PI * 2 / count) * i;
+        const radius = 120 + Math.random() * 50;
+        const dx = Math.cos(angle) * radius;
+        const dy = Math.sin(angle) * radius;
 
         p.animate([
-          {transform:`translate(${x}px,${y}px) scale(1)`,opacity:1},
-          {transform:`translate(${x+dx}px,${y+dy}px) scale(0.2)`,opacity:0}
-        ],{
-          duration:1500+Math.random()*500,
-          easing:'ease-out',
-          fill:'forwards'
+          { transform: `translate(${x}px, ${y}px) scale(1)`, opacity: 1 },
+          { transform: `translate(${x + dx}px, ${y + dy}px) scale(0.2)`, opacity: 0 }
+        ], {
+          duration: 1500 + Math.random() * 500,
+          easing: 'ease-out',
+          fill: 'forwards'
         });
 
-        setTimeout(()=>p.remove(),2000);
+        setTimeout(() => p.remove(), 2000);
       }
     }
 
-    // multiple fireworks
-    function randomFireworks(){
-      const x=Math.random()*window.innerWidth;
-      const y=Math.random()*window.innerHeight/2;
-      launchFirework(x,y);
+    // random firework
+    function randomFireworks() {
+      const x = Math.random() * window.innerWidth;
+      const y = Math.random() * window.innerHeight / 2;
+      launchFirework(x, y);
     }
 
-    // show first in center, then random
-    setTimeout(()=>{
-      launchFirework(window.innerWidth/2,window.innerHeight/2);
-      setInterval(randomFireworks,1500);
-    },1500);
+    // button handler
+document.getElementById('fireBtn').addEventListener('click', () => {
+  const numExplosions = 3 + Math.floor(Math.random() * 3); // 3–5 взрывов за клик
+  for (let i = 0; i < numExplosions; i++) {
+    setTimeout(() => {
+      randomFireworks();
+
+    }, i * 200);
+  }
+        playSound();
+});
+
+ // 🔊 добавляем звук
+
+function playSound() {
+  const audio = document.getElementById('boomSound');
+  
+  // Клонируем аудио, чтобы можно было воспроизводить сразу несколько
+  const clone = audio.cloneNode();
+  clone.play().catch(e => {
+    // Обычно нужна первая пользовательская интеракция — браузеры блокируют автозвук
+    console.log("Звук не проигрался: ", e);
+  });
+}
+
+    // запускаем один в центре при загрузке
+    setTimeout(() => {
+      launchFirework(window.innerWidth / 2, window.innerHeight / 2);
+    }, 1500);
   </script>
 </body>
 </html>
