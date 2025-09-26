@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Поздравление для Стаса</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:Inter,system-ui,Arial;background:#0f1724;color:#fff;display:flex;align-items:center;justify-content:center;min-height:100vh;overflow:hidden}
+
+    .container{position:relative;text-align:center;opacity:0;transform:translateY(40px);animation:fadeIn 2s ease forwards 3s;}
+    h1{font-size:36px;margin-bottom:12px;}
+    p{font-size:18px;color:#d1d5db;}
+
+    /* background animation */
+    .stars{position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;z-index:-1}
+    .stars span{position:absolute;display:block;width:2px;height:2px;background:#fff;animation:animStar linear infinite}
+
+    @keyframes animStar{from{transform:translateY(0)}to{transform:translateY(100vh)}}
+
+    @keyframes fadeIn{to{opacity:1;transform:translateY(0)}}
+
+    /* fireworks */
+    .particle{
+      position:absolute;
+      width:6px;
+      height:6px;
+      border-radius:50%;
+      pointer-events:none;
+      filter:blur(1px);
+    }
+  </style>
+</head>
+<body>
+  <div class="stars"></div>
+  <div class="container">
+    <h1>С Днём Рождения, Стас!</h1>
+    <p>Пусть твои дороги будут ровными, жизнь яркой, а мечты исполняются быстрее, чем набирается скорость.</p>
+  </div>
+
+  <script>
+    // generate stars
+    const stars=document.querySelector('.stars');
+    for(let i=0;i<120;i++){
+      const s=document.createElement('span');
+      s.style.left=Math.random()*window.innerWidth+'px';
+      s.style.top=Math.random()*window.innerHeight+'px';
+      s.style.animationDuration= 2+Math.random()*4+'s';
+      stars.appendChild(s);
+    }
+
+    // firework function
+    function launchFirework(x,y){
+      const count=40;
+      for(let i=0;i<count;i++){
+        const p=document.createElement('div');
+        p.className='particle';
+        const color=`hsl(${Math.random()*360},100%,60%)`;
+        p.style.background=color;
+        document.body.appendChild(p);
+
+        const angle=(Math.PI*2/count)*i;
+        const radius=120+Math.random()*50;
+        const dx=Math.cos(angle)*radius;
+        const dy=Math.sin(angle)*radius;
+
+        p.animate([
+          {transform:`translate(${x}px,${y}px) scale(1)`,opacity:1},
+          {transform:`translate(${x+dx}px,${y+dy}px) scale(0.2)`,opacity:0}
+        ],{
+          duration:1500+Math.random()*500,
+          easing:'ease-out',
+          fill:'forwards'
+        });
+
+        setTimeout(()=>p.remove(),2000);
+      }
+    }
+
+    // multiple fireworks
+    function randomFireworks(){
+      const x=Math.random()*window.innerWidth;
+      const y=Math.random()*window.innerHeight/2;
+      launchFirework(x,y);
+    }
+
+    // show first in center, then random
+    setTimeout(()=>{
+      launchFirework(window.innerWidth/2,window.innerHeight/2);
+      setInterval(randomFireworks,1500);
+    },1500);
+  </script>
+</body>
+</html>
